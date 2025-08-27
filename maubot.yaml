@@ -1,0 +1,14 @@
+maubot: 0.4.0
+id: org.metabrainz.jira
+version: 1.0.0
+license: MIT
+modules:
+  - jira
+main_class: JiraPlugin
+
+config: true
+webapp: false
+database: false
+
+extra_files:
+  - base-config.yaml

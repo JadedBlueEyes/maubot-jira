@@ -1,0 +1,12 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Rope project settings
+.ropeproject
+
+# MauBot specific
+*.mbp
+
+.DS_Store

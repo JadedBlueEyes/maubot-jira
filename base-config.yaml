@@ -1,0 +1,22 @@
+# JIRA configuration for maubot-jira plugin
+
+# Base URL for your JIRA instance (without trailing slash)
+jira_url: "https://tickets.metabrainz.org"
+
+# REST API suffix for JIRA API endpoints
+rest_api_suffix: "rest/api/2"
+
+# List of user IDs to ignore (your bot and other bots)
+ignored_users: ["@user:example.com", "@github:example.org"]
+
+# Cooldown time in seconds before an issue can be mentioned again
+issue_cooldown: 60
+
+# Maximum number of issues to respond to in a single message
+max_issues_per_message: 5
+
+# Whether to include the full JIRA URL in responses
+include_url: true
+
+# Whether to respond to issues mentioned in URLs (if false, only responds to bare issue keys)
+respond_to_urls: false
