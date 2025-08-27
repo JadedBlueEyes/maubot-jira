@@ -1,5 +1,6 @@
 import re
 import time
+import aiohttp
 from typing import Dict, List, Optional, Type
 from urllib.parse import urljoin
 
@@ -41,6 +42,9 @@ class JiraPlugin(Plugin):
         super().__init__(*args, **kwargs)
         self._projects: List[str] = []
         self._recent_issues: Dict[str, int] = {}
+
+        jar = aiohttp.DummyCookieJar()
+        self.nocookie = aiohttp.ClientSession(loop=self.loop, cookie_jar=jar)
 
     async def start(self) -> None:
         await super().start()
@@ -133,7 +137,7 @@ class JiraPlugin(Plugin):
             api_base = urljoin(self.config["jira_url"], self.config["rest_api_suffix"])
             issue_url = urljoin(api_base + "/", f"issue/{issue_key}")
 
-            response = await self.http.get(issue_url)
+            response = await self.nocookie.get(issue_url)
 
             if response.status == 200:
                 data = await response.json()
@@ -162,19 +166,15 @@ class JiraPlugin(Plugin):
     @jira_command.subcommand("update", help="Update the list of JIRA projects")
     async def update_projects(self, evt: MessageEvent) -> None:
         """Update the list of available JIRA projects"""
-        try:
-            success = await self._update_projects()
-            if success:
-                await evt.respond(
-                    f"Successfully updated projects list. Found {len(self._projects)} projects."
-                )
-            else:
-                await evt.respond(
-                    "Failed to update projects list. Check logs for details."
-                )
-        except Exception as e:
-            self.log.error(f"Error updating projects: {e}")
-            await evt.respond("An error occurred while updating projects list.")
+        success = await self._update_projects()
+        if success:
+            await evt.respond(
+                f"Successfully updated projects list. Found {len(self._projects)} projects."
+            )
+        else:
+            await evt.respond(
+                "Failed to update projects list. Check logs for details."
+            )
 
     async def _update_projects(self) -> bool:
         """Fetch and update the list of JIRA projects"""
@@ -182,7 +182,7 @@ class JiraPlugin(Plugin):
             api_base = urljoin(self.config["jira_url"], self.config["rest_api_suffix"])
             projects_url = urljoin(api_base + "/", "project")
 
-            response = await self.http.get(projects_url)
+            response = await self.nocookie.get(projects_url)
 
             if response.status == 200:
                 projects_data = await response.json()
@@ -193,6 +193,7 @@ class JiraPlugin(Plugin):
                 return True
             else:
                 self.log.error(f"Failed to fetch projects: HTTP {response.status}")
+                self.log.error(f"{response}")
                 return False
 
         except Exception as e:
