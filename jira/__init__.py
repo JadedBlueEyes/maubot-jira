@@ -1,9 +1,9 @@
 import re
 import time
-import aiohttp
 from typing import Dict, List, Optional, Type
 from urllib.parse import urljoin
 
+import aiohttp
 from maubot import MessageEvent, Plugin
 from maubot.handlers import command, event
 from mautrix.types import EventType, MessageType
@@ -172,9 +172,7 @@ class JiraPlugin(Plugin):
                 f"Successfully updated projects list. Found {len(self._projects)} projects."
             )
         else:
-            await evt.respond(
-                "Failed to update projects list. Check logs for details."
-            )
+            await evt.respond("Failed to update projects list. Check logs for details.")
 
     async def _update_projects(self) -> bool:
         """Fetch and update the list of JIRA projects"""
