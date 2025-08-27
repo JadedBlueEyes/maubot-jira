@@ -145,7 +145,7 @@ class JiraPlugin(Plugin):
 
                 if self.config["include_url"]:
                     browse_url = urljoin(self.config["jira_url"], f"browse/{issue_key}")
-                    return f"{issue_key}: {title} {browse_url}"
+                    return f"[{issue_key}]({browse_url}): {title}"
                 else:
                     return f"{issue_key}: {title}"
             else:
