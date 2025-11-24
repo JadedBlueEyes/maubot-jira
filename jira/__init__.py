@@ -129,12 +129,10 @@ class JiraPlugin(Plugin):
                 formatted_responses = responses
 
             # Format as markdown list when there are multiple issues
-            if len(formatted_responses) > 1:
-                response_text = "\n".join(
-                    f"- {response}" for response in formatted_responses
-                )
-            else:
-                response_text = "\n".join(formatted_responses)
+            prefix = "- " if len(formatted_responses) > 1 else ""
+            response_text = "\n".join(
+                f"{prefix}{response}" for response in formatted_responses
+            )
             await evt.respond(response_text)
 
     async def _fetch_issue_info(self, issue_key: str) -> Optional[str]:
