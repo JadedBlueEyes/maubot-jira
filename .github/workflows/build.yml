@@ -1,0 +1,52 @@
+name: Build and Upload Plugin
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Build plugin
+        run: ./build.sh
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jira-plugin
+          path: jira.mbp
+          if-no-files-found: error
+  
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Build plugin
+        run: ./build.sh
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: jira.mbp
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
